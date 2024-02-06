@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tableCRUD</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
+     <!-- Agrega los scripts necesarios para Bootstrap y tu código JavaScript -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <style>
+     .container {
+       width: 100%;
+     }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333; /* Color de fondo del encabezado */
+      color: #fff; /* Color del texto en el encabezado */
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex; /* Establecer el contenedor de navegación como un contenedor flex */
+      justify-content: center; /* Centrar los elementos horizontalmente */
+      background-color: #555; /* Color de fondo del menú */
+    }
+
+    nav ul {
+      list-style: none; /* Eliminar los estilos de lista (viñetas) */
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li {
+      display: inline-block; /* Mostrar los elementos de lista en línea */
+      margin-right: 10px; /* Espaciado entre elementos de lista */
+    }
+
+    nav ul li a {
+      text-decoration: none; /* Eliminar la decoración de texto (subrayado) en los enlaces */
+      color: #fff; /* Color del texto en los enlaces del menú */
+    }
+    .mb-3{
+	    color: #ffffff
+	    font-size: 20px;
+    }
+    h3{
+       margin-top: 0px;
+    }
+    .container{
+      margin-top: -25px;
+    }
+  </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+	let usuario = "";
+	let terceros = "";
+	function handleCredentialResponse(response) {
+           // decodeJwtResponse() is a custom function defined by you
+           // to decode the credential response.
+           const responsePayload = decodeJwtResponse(response.credential);
+           console.log("ID: " + responsePayload.sub);
+           console.log('Full Name: ' + responsePayload.name);
+           console.log('Given Name: ' + responsePayload.given_name);
+           console.log('Family Name: ' + responsePayload.family_name);
+           console.log("Image URL: " + responsePayload.picture);
+           console.log("Email: " + responsePayload.email);
+	   localStorage.setItem("usuario", JSON.stringify(responsePayload.email));
+  	   // Obtén el usuario almacenado en localStorage
+           usuario = JSON.parse(localStorage.getItem("usuario"));
+  	   // Verifica si el usuario existe antes de intentar mostrarlo
+           if (usuario && responsePayload.email) {
+        	// Actualiza el contenido del elemento h3 con el usuario
+        	const h3Element = document.querySelector(".mb-3");
+        	h3Element.textContent = `| Listado Pagos | Usuario: ${usuario}`;
+        	// Muestra la tabla y oculta el botón de Google Sign-In
+        	var tabla = document.querySelector(".table");
+        	tabla.style.display = "block";
+        	var gsignin = document.querySelector(".g_id_signin");
+        	gsignin.style.display = "none";
+        	// Llama a la función para obtener y mostrar los datos del tercero
+        	obtenerYMostrarTerceros();
+    	   }
+        }
+        function decodeJwtResponse(token) {
+           var base64Url = token.split('.')[1];
+           var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+           var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+              return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+           }).join(''));
+           return JSON.parse(jsonPayload);
+        }    
+    </script>
+</head>
+<body>
+  <header>
+    <h3>TableCRUD</h3>
+    <nav>
+      <ul>
+	      <li><h4 class="mb-3"></h4></li>
+      </ul> 
+    </nav>
+  </header>
+	
+  <div id="g_id_onload"
+     data-client_id="980822676255-vntch0t28qbesul2bp5oc1galtoi8a97.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-context="use"
+     data-ux_mode="popup"
+     data-auto_select="true"
+     data-itp_support="true" style="padding: 20px;">
+  </div>
+  <div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="signin_with"
+     data-size="large"
+     data-logo_alignment="left" style="padding-left: 20px;">
+  </div>
+	
+  <div class="container mt-5">
+
+    <table class="table" style="display: none">
+      <thead>
+        <tr style="background: #a2baf4; font-size: 9px;">
+          <th scope="col">Identificación</th>
+          <th scope="col">Apellido 1</th>
+          <th scope="col">Apellido 2</th>
+          <th scope="col">Nombre 1</th>
+          <th scope="col">Nombre 2</th>
+          <th scope="col">Fecha Ingreso</th>
+          <th scope="col">TRM</th>
+          <th scope="col">Recibido</th>
+          <th scope="col">Fecha Pago</th>
+          <th scope="col">Inversión (Inv)</th>
+          <th scope="col">% Retorno Inv.</th>
+          <th scope="col">Retorno Inv.</th>
+          <th scope="col">Valor a Pagar</th>
+          <th scope="col">Banco</th>
+          <th scope="col">Cuenta</th>
+          <th scope="col">Tipo de Cuenta</th>
+        </tr>
+      </thead>
+      <tbody class="contenedor">
+        <!-- Aquí se mostrarán los registros -->
+      </tbody>
+    </table>
+  </div>
+	
+  <script>
+   async function obtenerOneTercero() {
+      usuario = JSON.parse(localStorage.getItem("usuario"));	   
+      // const url = 'https://23913d9f-9a23-4b9c-9311-875072a4c064-00-3b5jrh193tc3d.kirk.replit.dev/getOneTercero/' + usuario;
+      const url = 'https://v6dxrc-3000.csb.app/getOneTercero/' + usuario;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Error en la solicitud');
+        }
+        const data = await response.json();
+        if (data && data.tercero) {
+	   return data.tercero; // Devolver un array con el tercero
+	} else {
+	   throw new Error('No se encontró el tercero en los datos obtenidos');
+	}
+      } catch (error) {
+        console.error('Error:', error);
+        return [];
+      }
+    }
+
+    //document.addEventListener("DOMContentLoaded", async () => {
+   async function obtenerYMostrarTerceros() {
+      terceros = await obtenerOneTercero();
+      const contenedor = document.querySelector(".contenedor");
+      let productosHTML = "";
+      terceros.forEach((tercero) => {
+        localStorage.setItem("usuario", JSON.stringify(tercero));
+        productosHTML += `
+          <tr style="border: 1px solid #80808078">
+            <td>${tercero.identificacion}</td>
+            <td>${tercero.apellido1}</td>
+            <td>${tercero.apellido2}</td>
+            <td>${tercero.nombre1}</td>
+            <td>${tercero.nombre2}</td>
+            <td>${tercero.fechaingreso}</td>
+            <td>${tercero.trm}</td>
+            <td>${tercero.recibido}</td>
+            <td>${tercero.fechapago}</td>
+            <td>${tercero.inversion}</td>
+            <td>${tercero.trmdia}</td>
+            <td>${tercero.retorno10}</td>
+            <td>${tercero.valorapagar}</td>
+            <td>${tercero.banco}</td>
+            <td>${tercero.cuenta}</td>
+            <td>${tercero.tipodecuenta}</td>
+          </tr>
+        `;
+      });
+      contenedor.innerHTML = productosHTML;
+    //)};
+    };
+	  
+  </script>
+ 
+</body>
+</html>

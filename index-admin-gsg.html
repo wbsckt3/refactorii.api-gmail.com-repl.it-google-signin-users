@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refactorii Google Signin | Admin</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
+  <link href="css/calendar.css" type="text/css" rel="stylesheet">
+  <script type="text/javascript" src="js/calendar.js"></script>
+  <style>
+     .container {
+       width: 100%;
+     }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333; /* Color de fondo del encabezado */
+      color: #fff; /* Color del texto en el encabezado */
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex; /* Establecer el contenedor de navegación como un contenedor flex */
+      justify-content: center; /* Centrar los elementos horizontalmente */
+      background-color: #555; /* Color de fondo del menú */
+    }
+
+    nav ul {
+      list-style: none; /* Eliminar los estilos de lista (viñetas) */
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li {
+      display: inline-block; /* Mostrar los elementos de lista en línea */
+      margin-right: 10px; /* Espaciado entre elementos de lista */
+    }
+
+    nav ul li a {
+      text-decoration: none; /* Eliminar la decoración de texto (subrayado) en los enlaces */
+      color: #fff; /* Color del texto en los enlaces del menú */
+    }
+    .mb-3{
+	    color: #ffffff
+	    font-size: 20px;
+    }
+    h3{
+       margin-top: 0px;
+    }
+    .contenedor{
+      font-size: 13px;
+    }
+    td #id{
+      font-size: -0.8em !important;
+    }
+  </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+	function handleCredentialResponse(response) {
+           // decodeJwtResponse() is a custom function defined by you
+           // to decode the credential response.
+           const responsePayload = decodeJwtResponse(response.credential);
+           console.log("ID: " + responsePayload.sub);
+           console.log('Full Name: ' + responsePayload.name);
+           console.log('Given Name: ' + responsePayload.given_name);
+           console.log('Family Name: ' + responsePayload.family_name);
+           console.log("Image URL: " + responsePayload.picture);
+           console.log("Email: " + responsePayload.email);
+        }
+
+    function decodeJwtResponse(token) {
+       var base64Url = token.split('.')[1];
+       var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+       var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+       }).join(''));
+       return JSON.parse(jsonPayload);
+    }
+  </script>
+</head>
+<body>
+	
+  <header>
+    <h3>Refactorii Google Signin Users | Panel administración</h3>
+    <div id="g_id_onload"
+     data-client_id="980822676255-vntch0t28qbesul2bp5oc1galtoi8a97.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse"
+     data-context="use"
+     data-ux_mode="popup"
+     data-auto_select="true"
+     data-itp_support="true" style="margin-top: -47px;">
+    </div>
+    <div class="g_id_signin"
+     data-type="standard"
+     data-shape="rectangular"
+     data-theme="outline"
+     data-text="signin_with"
+     data-size="large"
+     data-logo_alignment="left">
+    </div>
+  </header>
+	
+  
+    
+    <table width=100%>
+    <tr>
+      <td id="title">
+        dailyTasks
+      </td>
+    </tr>
+    </table>
+    <div class="calendar" id="calendar"></div>
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refactorii GoogleSigninUsers | admin</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
+     <!-- Agrega los scripts necesarios para Bootstrap y tu código JavaScript -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <style>
+     .container {
+       width: 100%;
+     }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333; /* Color de fondo del encabezado */
+      color: #fff; /* Color del texto en el encabezado */
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav {
+      display: flex; /* Establecer el contenedor de navegación como un contenedor flex */
+      justify-content: center; /* Centrar los elementos horizontalmente */
+      background-color: #555; /* Color de fondo del menú */
+    }
+
+    nav ul {
+      list-style: none; /* Eliminar los estilos de lista (viñetas) */
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li {
+      display: inline-block; /* Mostrar los elementos de lista en línea */
+      margin-right: 10px; /* Espaciado entre elementos de lista */
+    }
+
+    nav ul li a {
+      text-decoration: none; /* Eliminar la decoración de texto (subrayado) en los enlaces */
+      color: #fff; /* Color del texto en los enlaces del menú */
+    }
+    .mb-3{
+	    color: #ffffff
+	    font-size: 20px;
+    }
+    h3{
+       margin-top: 0px;
+    }
+    .contenedor{
+      font-size: 11px;
+    }
+  </style>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userDate = urlParams.get("user-date");
+    const userDateArray = userDate.split("_");
+    console.log("usuario", userDateArray[0])
+    console.log("fecha",   userDateArray[1])
+    // Obtén el elemento h2 por su clase
+    localStorage.setItem("usuario", JSON.stringify(userDateArray[0]));
+    localStorage.setItem("fecha", JSON.stringify(userDateArray[1]));
+  </script>
+</head>
+<body>
+  <header>
+    <!-- Aquí puedes incluir tu título y menú -->
+    <h3>Refactorii Google Signin Users | Admin</h3>
+    <nav>
+      <ul>
+	      <li><h4 class="mb-3"></h4></li>
+      </ul> 
+    </nav>
+  </header>
+  <div class="container mt-5">
+    <button id="agregarRegistro" class="btn btn-primary mb-3" style="margin-bottom: 15px; margin-top: 15px;">
+        Agregar Usuario
+    </button>
+    <table class="table">
+      <thead>
+        <tr style="background: #a2baf4; font-size: 9px;">
+          <th scope="col">FullName</th>
+          <th scope="col">GivenName</th>
+          <th scope="col">FamilyName</th>
+          <th scope="col">Fecha Ingreso</th>
+          <th scope="col">ImageURL</th>
+          <th scope="col">Email</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody class="contenedor">
+        <!-- Aquí se mostrarán los registros -->
+      </tbody>
+    </table>
+  </div>
+
+<!-- Modal para agregar registro -->
+<div class="modal fade" id="agregarModal" tabindex="-1" role="dialog" aria-labelledby="agregarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="agregarModalLabel">Agregar Nuevo Registro</h4>
+        Inicialmente cuando un usuario se registra obtiene 10 días gratis porque la fecha de Ingreso
+        queda registrada 20 días antes de la fecha de registro. Lueg cuanfdo hay un pago aquí se cambia
+        la fecha de ingreso por la fecha de pago para que el usuario obtenga acceso por 30 días
+        <br/>
+	<div style="background: #f0fffc; padding: 10px; border: 1px solid green; border-radius: 5px; font-weight: bold">
+	   En el campo Email agrega el correo de Gmail del usuario para que pueda ingresar al mes de servicio
+	</div>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario de registro -->
+        <form id="formularioRegistro" class="row g-3">
+          <div class="col-md-6">
+	          <div class="mb-3">	
+	             <label for="FullName" class="form-label">FullName</label>
+	             <input type="text" class="form-control" id="FullName" name="FullName" required>
+	          </div>
+	          <div class="mb-3">
+	            <label for="GivenName" class="form-label">GivenName</label>
+	            <input type="text" class="form-control" id="GivenName" name="GivenName" required>
+	          </div>
+	          <div class="mb-3">
+	            <label for="FamilyName" class="form-label">FamilyName</label>
+	            <input type="text" class="form-control" id="FamilyName" name="FamilyName" required>
+	          </div>
+          </div>
+          <div class="col-md-6">
+	          <div class="mb-3">
+	            <label for="FechaIngreso" class="form-label">Fecha Ingreso</label>
+	            <input type="text" class="form-control" id="FechaIngreso" name="FechaIngreso" disabled>
+	          </div>
+		      <div class="mb-3">
+	            <label for="ImageURL" class="form-label">ImageURL</label>
+	            <input type="text" class="form-control" id="ImageURL" name="ImageURL" required>
+	          </div>
+		      <div class="mb-3">
+	            <label for="Email" class="form-label">Email</label>
+	            <input type="text" class="form-control" id="Email" name="Email" oninput="" required>
+	          </div>
+	      </div>
+          <button type="submit" class="btn btn-primary" style="padding: 8px; margin-top: 21px; margin-left: 15px; width: 45%;">
+		        Guardar
+	      </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar registro -->
+<div class="modal fade" id="agregarModal2" tabindex="-1" role="dialog" aria-labelledby="modalEditarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="agregarModalLabel">Editar Registro</h4>
+        <br/>
+	<div style="background: #f0fffc; padding: 10px; border: 1px solid green; border-radius: 5px; font-weight: bold">
+	  El campo FechaIngreso corresponde a la fecha de pago del mes de servicio y habilita al usuario para que pueda ingresar al mes de servicio
+	</div>
+      </div>
+      <div class="modal-body">
+        <!-- Formulario de registro -->
+        <form id="formularioRegistroEdicion" class="row g-3">
+			<div class="col-md-6">
+				<div class="mb-3">	
+				   <label for="FullName_edit" class="form-label">FullName</label>
+				   <input type="text" class="form-control" id="FullName_edit" name="FullName_edit" required>
+				</div>
+				<div class="mb-3">
+				  <label for="GivenName_edit" class="form-label">GivenName</label>
+				  <input type="text" class="form-control" id="GivenName_edit" name="GivenName_edit" required>
+				</div>
+				<div class="mb-3">
+				  <label for="FamilyName_edit" class="form-label">FamilyName</label>
+				  <input type="text" class="form-control" id="FamilyName_edit" name="FamilyName_edit" required>
+				</div>
+      </div>
+      <div class="col-md-6">
+				<div class="mb-3">
+				  <label for="FechaIngreso_edit" class="form-label">FechaIngreso</label>
+				  <input type="text" class="form-control" id="FechaIngreso_edit" name="FechaIngreso_edit" required>
+				</div>
+				<div class="mb-3">
+				  <label for="ImageURL_edit" class="form-label">ImageURL</label>
+				  <input type="text" class="form-control" id="ImageURL_edit" name="ImageURL_edit" required>
+				</div>
+				<div class="mb-3">
+				  <label for="Email_edit" class="form-label">Email</label>
+				  <input type="text" class="form-control" id="Email_edit" name="Email_edit" oninput="" required>
+				</div>
+      </div>
+      <div>
+          <button type="submit" class="btn btn-primary" style="padding: 8px; margin-top: 21px; margin-left: 15px; width: 45%;">
+            Guardar Edición
+          </button>
+      </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+	
+<script>
+$('#agregarModal').on('shown.bs.modal', function () {
+      // Establecer el enfoque en el campo de documento al abrir el modal
+      $('#agregarModal input[name="documento"]').focus();
+      // Limpiar los campos de texto
+      $('#agregarModal form')[0].reset();
+      const fechaingresoValue = JSON.parse(localStorage.getItem("fecha"));
+	    const fechaingresoInput = document.getElementById("FechaIngreso");
+	    fechaingresoInput.value = fechaingresoValue;
+});
+  
+async function obtenerProductos() {
+      try {
+        // const response = await fetch('https://23913d9f-9a23-4b9c-9311-875072a4c064-00-3b5jrh193tc3d.kirk.replit.dev/tercerosFromGraphQL');
+        const response =  await fetch('https://989f58-3000.csb.app/GoogleSigninUsersFromGraphQL');
+	if (!response.ok) {
+          throw new Error('Error en la solicitud');
+        }
+        const data = await response.json();
+        return data.GoogleSigninUsers;
+      } catch (error) {
+        console.error('Error:', error);
+        return [];
+      }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const contenedor = document.querySelector(".contenedor");
+  const GoogleSigninUsers = await obtenerProductos();
+  let productosHTML = "";
+  GoogleSigninUsers.forEach((GoogleSigninUser) => {
+        localStorage.setItem(`tercero_${GoogleSigninUser._id}`, JSON.stringify(GoogleSigninUser));
+        productosHTML += `
+          <tr style="border: 1px solid #80808078">
+            <td>${GoogleSigninUser.FullName}</td>
+            <td>${GoogleSigninUser.GivenName}</td>
+            <td>${GoogleSigninUser.FamilyName}</td>
+            <td>${GoogleSigninUser.FechaIngreso}</td>
+            <td>${GoogleSigninUser.ImageURL}</td>
+            <td>${GoogleSigninUser.Email}</td>
+            <td>
+              <button type="button" class="btn btn-primary editar-btn" data-tercero-id-editar="${GoogleSigninUser._id}" >
+                Editar
+              </button>
+            </td>
+          </tr>
+        `;
+  });
+
+  contenedor.innerHTML = productosHTML;
+
+  // Agrega un evento al botón de agregar registro para mostrar el modal
+  document.getElementById("agregarRegistro").addEventListener("click", () => {
+        const modal = $('#agregarModal').modal({ keyboard: false });
+        modal.show();
+        // Obtener la TRM del día:
+	      // URL del servicio
+        const url = "https://brokt-8888.csb.app/trm";
+        // Elemento HTML donde mostrar el valor de la TRM
+        // Realizar la solicitud HTTP utilizando fetch
+        fetch(url).then(response => response.json()).then(data => {
+                    // Verificar si el campo 'value' está presente en la respuesta
+                    if (data && data.value) {
+                        const trmValue = data.value;
+                        trmInput.value = trmValue;
+                        localStorage.setItem("trmdia", JSON.stringify(trmValue));
+                    } else {
+                        trmInput.value = "No se encontró el campo 'value' en la respuesta JSON.";
+                    }
+        }).catch(error => { trmInput.value = `Error al realizar la solicitud HTTP: ${error}`; });
+	      const fechaingresoValue = JSON.parse(localStorage.getItem("fecha"));
+	      const fechaingresoInput = document.getElementById("FechaIngreso");
+	      fechaingresoInput.value = fechaingresoValue;
+  });
+
+  async function agregarNuevoRegistro(registro){
+        try {
+            //const response = await fetch('https://23913d9f-9a23-4b9c-9311-875072a4c064-00-3b5jrh193tc3d.kirk.replit.dev/postOneTercero', {
+            const response = await fetch('https://989f58-3000.csb.app/postOneGoogleSigninUser', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(registro),
+          });
+          if (!response.ok) {
+            throw new Error('Error en la solicitud');
+          }
+          const data = await response.json();
+          return data.GoogleSigninUser; // Ajusta según la respuesta real del servidor
+        } catch (error) {
+          console.error('Error:', error);
+          return null;
+        }
+  }
+	    
+  // Agrega un evento de escucha al formulario para manejar la lógica de agregar un nuevo registro
+  const formularioRegistro = document.getElementById("formularioRegistro");
+  formularioRegistro.addEventListener("submit", async (event) => {
+        event.preventDefault();
+	
+	    // Obtén los valores de los campos del formulario
+	    const FullName = $("#FullName").val();
+	    const GivenName = $("#GivenName").val();
+	    const FamilyName = $("#FamilyName").val();
+	    const FechaIngreso = $("#FechaIngreso").val();
+	    const ImageURL = $("#ImageURL").val();
+	    const Email = $("#Email").val();
+	      // Construye el objeto con los datos del formulario
+	      const formData = {
+	        FullName,
+	        GivenName,
+	        FamilyName,
+	        FechaIngreso,
+	        ImageURL,
+	        Email
+	      };
+	
+	      // Llama a la función para agregar un nuevo registro
+	    const nuevoRegistro = await agregarNuevoRegistro(formData);
+	
+	    // Verifica si se agregó el registro correctamente
+	    if (nuevoRegistro) {
+	      console.log('Registro creado exitosamente:', nuevoRegistro);
+	      // Oculta el modal después de 3 segundos
+	      // Oculta el modal después de 3 segundos
+	      $('#agregarModal').modal('hide');
+              alertWithoutConfirmation("Registro creado");
+	      // Espera 3 segundos antes de recargar la página
+	      setTimeout(function() {
+      		location.reload();
+	      }, 3000);
+	    } else {
+	      console.error('Error al crear el registro.');
+	      // Puedes mostrar un mensaje de error al usuario si es necesario
+	      alert('Error al crear el registro. Consulta la consola para más detalles.');
+	    }
+  });
+
+    // Manejo del modal de edición de cada registro:
+
+    async function modificarRegistro(registro){
+        try { console.log(registro)
+            //const response = await fetch('https://23913d9f-9a23-4b9c-9311-875072a4c064-00-3b5jrh193tc3d.kirk.replit.dev/postOneTercero', {
+            const response = await fetch('https://989f58-3000.csb.app/updateOneGoogleSigninUser', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(registro),
+          });
+          if (!response.ok) {
+            throw new Error('Error en la solicitud');
+          }
+          const data = await response.json();
+          return data.updatedGoogleSigninUser; // Ajusta según la respuesta real del servidor
+        } catch (error) {
+          console.error('Error:', error);
+          return null;
+        }
+    }
+
+    // Agrega un evento de escucha al formulario de edición para manejar la lógica de modificar el registro
+    const formularioRegistroEdicion = document.getElementById("formularioRegistroEdicion");
+    formularioRegistroEdicion.addEventListener("submit", async (event) => {
+          event.preventDefault();
+	      // Obtén los valores de los campos del formulario
+		  const _id = JSON.parse(localStorage.getItem("terceroaEditar"));
+	       // Obtén los valores de los campos del formulario
+	    const FullName = $("#FullName_edit").val();
+	    const GivenName = $("#GivenName_edit").val();
+	    const FamilyName = $("#FamilyName_edit").val();
+	    const FechaIngreso = $("#FechaIngreso_edit").val();
+	    const ImageURL = $("#ImageURL_edit").val();
+	    const Email = $("#Email_edit").val();
+	      // Construye el objeto con los datos del formulario
+	      const formData = {
+          _id,
+	        FullName,
+	        GivenName,
+	        FamilyName,
+	        FechaIngreso,
+	        ImageURL,
+	        Email
+	      };
+	
+	      // Llama a la función para modificar un registro
+	    const registroModificado = await modificarRegistro(formData);
+	
+	    // Verifica si se agregó el registro correctamente
+	    if (registroModificado) {
+	      console.log('Registro modificado exitosamente:', registroModificado);
+	      // Oculta el modal después de 3 segundos
+	      // Oculta el modal después de 3 segundos
+	      $('#agregarModal2').modal('hide');
+        alertWithoutConfirmation("Registro modificado");
+	      // Espera 3 segundos antes de recargar la página
+	      setTimeout(function() {
+      		location.reload();
+	      }, 3000);
+	    } else {
+	      console.error('Error al modificar el registro.');
+	      // Puedes mostrar un mensaje de error al usuario si es necesario
+	      alert('Error al modificar el registro. Consulta la consola para más detalles.');
+	    }
+  });
+  
+  // Asignar eventos de clic para los botones de editar
+  const editarBtns = document.querySelectorAll('.editar-btn');
+  editarBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const terceroId = btn.getAttribute('data-tercero-id-editar');
+	  localStorage.setItem("terceroaEditar", JSON.stringify(terceroId));
+      // Lógica para cargar los datos del tercero en el formulario de edición
+      cargarDatosEdicion(terceroId);
+    });
+  });
+	    
+}); // -------------- cierra evento de la línea 382
+
+function cargarDatosEdicion(terceroId) {
+  const tercero = JSON.parse(localStorage.getItem(`tercero_${terceroId}`));
+  // Lógica para cargar los datos en los campos del formulario de edición
+  document.getElementById('FullName_edit').value = tercero.FullName;
+	document.getElementById('GivenName_edit').value = tercero.GivenName;
+	document.getElementById('FamilyName_edit').value = tercero.FamilyName;
+  document.getElementById('FechaIngreso_edit').value = tercero.FechaIngreso;
+	document.getElementById('ImageURL_edit').value = tercero.ImageURL;
+  document.getElementById('Email_edit').value = tercero.Email;
+  // Abrir el modal de edición (Bootstrap 3)
+  $('#agregarModal2').modal('show');
+}
+
+$(document).ready(function () {
+  $('.datepicker').datepicker({
+	  format: 'yyyy-mm-dd', // Ajusta el formato según tus necesidades
+	  autoclose: true
+	});
+});
+
+// Obtén el elemento h2 por su clase
+const h3Element = document.querySelector(".mb-3");
+// Obtén el usuario almacenado en localStorage
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+const fecha = JSON.parse(localStorage.getItem("fecha"));
+// Verifica si el usuario existe antes de intentar mostrarlo
+if (usuario) {
+  // Actualiza el contenido del elemento h2 con el usuario
+  h3Element.textContent = `Listado Google Signin Users | Usuario: ${usuario} | Fecha Hoy: ${fecha}`;
+}
+
+// Función para mostrar un alert sin botón de confirmación
+function alertWithoutConfirmation(message) {
+  const alertBox = document.createElement("div");
+	alertBox.className = "custom-alert";
+	alertBox.innerHTML = message;
+	document.body.appendChild(alertBox);
+	// Después de un tiempo, elimina el alert
+	setTimeout(function() {
+	  alertBox.style.display = "none";
+	  document.body.removeChild(alertBox);
+	}, 3000);
+}
+	  
+</script>
+</body>
+</html>
