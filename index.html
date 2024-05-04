@@ -65,6 +65,11 @@
 	let usuario = "";
 	let terceros = "";
 	function handleCredentialResponse(response) {
+
+	   // Llama a una función para autenticarse en la API de Atlas
+	   const token = response.credential
+           authenticateWithAtlas(token);	
+		
            // decodeJwtResponse() is a custom function defined by you
            // to decode the credential response.
            const responsePayload = decodeJwtResponse(response.credential);
@@ -98,7 +103,40 @@
               return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
            }).join(''));
            return JSON.parse(jsonPayload);
-        }    
+        }  
+	async function authenticateWithAtlas(token) {
+	    // Aquí debes poner el token obtenido de Google Sign-In
+	    const url = 'https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find';
+	    const requestData = {
+	        collection: 'googlesigninusers',
+	        database: 'test',
+	        dataSource: 'ClusterAppXpressWbsckt2',
+	    };
+	
+	    fetch(url, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	            'Access-Control-Request-Headers': '*',
+	            // Utiliza el token de Google Sign-In en lugar de la clave API
+	            'Authorization': `Bearer ${token}`
+	        },
+	        body: JSON.stringify(requestData)
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error('Network response was not ok');
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        console.log(data);
+	        // Haz algo con la respuesta
+	    })
+	    .catch(error => {
+	        console.error('There was a problem with your fetch operation:', error);
+	    });
+	}  
     </script>
 </head>
 <body>
