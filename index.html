@@ -105,7 +105,18 @@
 	    })
 	    .catch(error => {
 	        console.error("There was a problem with your fetch operation:", error);
-	    });	
+	    });
+
+            const app = new Realm.App({ id: "data-wugsegk" });
+	    const credentials = Realm.Credentials.anonymous();
+	    app.logIn(credentials)
+		  .then(user => {
+		    console.log("Logged in as anonymous user:", user.id);
+		    // Realiza las operaciones necesarias con el usuario autenticado
+		  })
+		  .catch(error => {
+		    console.error("Failed to log in anonymously:", error);
+		  });		
 		
   	   // Obtén el usuario almacenado en localStorage
            usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -131,18 +142,6 @@
            }).join(''));
            return JSON.parse(jsonPayload);
         } 
-
-	const app = new Realm.App({ id: "data-wugsegk" });
-	const credentials = Realm.Credentials.anonymous();
-	
-	app.logIn(credentials)
-	  .then(user => {
-	    console.log("Logged in as anonymous user:", user.id);
-	    // Realiza las operaciones necesarias con el usuario autenticado
-	  })
-	  .catch(error => {
-	    console.error("Failed to log in anonymously:", error);
-	  });
 
     </script>
 </head>
