@@ -82,22 +82,28 @@
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
 			
-	    var settings = {
-		  "async": true,
-		  "crossDomain": true,
-		  "url": "https://dev-tgnls5d6l1wc4wjs.us.auth0.com/oauth/token",
-		  "method": "POST",
-		  "headers": {
-		    "content-type": "application/json"
-		  },
-		  "data": "{\"client_id\":\"N2Ji6ZdCrw57rt6DYhLS4MWkCnrckX7u\",\"client_secret\":\"a5DZj6RMm_NXR1DXO4gP0ZpTyQJ-D9nse0gbsi7lKTbiA2qjtc3ugSybN8MEVFGs\",\"audience\":\"https://dev-tgnls5d6l1wc4wjs.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
-		}
-		
-		$.ajax(settings).done(function (response) {
-		  console.log(response);
-		})
+	    fetch("https://us-east-1.aws.realm.mongodb.com/api/client/v2.0/app/data-wugsegk/auth/providers/google/login", {
+	        method: "POST",
+	        headers: {
+	            "Content-Type": "application/json"
+	        },
+	        body: JSON.stringify({ access_token: accessToken })
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error("Failed to log in with Google Sign-In");
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        console.log("Logged in with Google Sign-In:", data);
+	        // Haz algo con la respuesta de autenticación
+	    })
+	    .catch(error => {
+	        console.error("Error logging in with Google Sign-In:", error);
+	    });
 			
-	   fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
+	   /*fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
 	        method: "POST",
 	        headers: {
 	            	"Accept": "application/json",
@@ -122,7 +128,7 @@
 	    })
 	    .catch(error => {
 	        console.error("There was a problem with your fetch operation:", error);
-	    });
+	    }); */
 
   	   // Obtén el usuario almacenado en localStorage
            usuario = JSON.parse(localStorage.getItem("usuario"));
