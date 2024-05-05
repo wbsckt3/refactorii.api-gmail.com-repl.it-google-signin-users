@@ -81,22 +81,6 @@
            // conectar con el API de mongo
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
-
-           // Define la información que deseas incluir en el token
-	        const payload = {
-	            user_id: '1234567890',
-	            username: 'usuario@example.com',
-	            // Otros datos que desees incluir en el token
-	        };
-	
-	        // Define la clave secreta compartida
-	        const secretKey = 'mi_clave_secreta';
-	
-	        // Genera el token JWT firmado con HS256
-	        const token = jwt.sign(payload, secretKey, { algorithm: 'HS256' });
-	
-	        // Imprime el token generado
-	        console.log('Token JWT HS256:', token);
 			
 	    // Llama a una función para iniciar sesión con el token de portador
 	    loginWithBearerToken(accessToken);	
