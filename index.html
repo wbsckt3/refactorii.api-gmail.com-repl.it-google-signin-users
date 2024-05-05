@@ -12,7 +12,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonwebtoken/9.0.2/index.js"></script> 
+  <script src="https://cdn.jsdelivr.net/npm/jsonwebtoken-web@1.3.3/bundle.js"></script>
   <style>
      .container {
        width: 100%;
@@ -82,26 +82,22 @@
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
 			
-	    fetch("https://us-east-1.aws.realm.mongodb.com/api/client/v2.0/app/data-wugsegk/auth/providers/google/login", {
-	        method: "POST",
-	        headers: {
-	            "Content-Type": "application/json"
-	        },
-	        body: JSON.stringify({ access_token: accessToken })
-	    })
-	    .then(response => {
-	        if (!response.ok) {
-	            throw new Error("Failed to log in with Google Sign-In");
-	        }
-	        return response.json();
-	    })
-	    .then(data => {
-	        console.log("Logged in with Google Sign-In:", data);
-	        // Haz algo con la respuesta de autenticación
-	    })
-	    .catch(error => {
-	        console.error("Error logging in with Google Sign-In:", error);
-	    });
+	        // Clave secreta para firmar el token JWT
+		const secretKey = 'customjwtsecretname'; // Reemplaza esto con tu clave secreta
+		// Datos que quieres incluir en el token
+		const payload = {
+		  // Aquí puedes incluir cualquier dato que desees asociar con el token
+		  usuario: 'usuarioEjemplo',
+		  rol: 'admin'
+		};
+		// Opciones de configuración para el token
+		const options = {
+		  // Establece el tiempo de expiración del token (opcional)
+		  expiresIn: '1h'
+		};
+		// Genera el token JWT firmado
+		const token = jwt.sign(payload, secretKey, options);
+		console.log('Token JWT generado:', token);
 			
 	   /*fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
 	        method: "POST",
