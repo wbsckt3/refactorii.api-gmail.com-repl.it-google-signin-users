@@ -107,15 +107,6 @@
 	        console.error("There was a problem with your fetch operation:", error);
 	    });
 
-            const app = new Realm.App({ id: "data-wugsegk" });
-	    const credentials = Realm.Credentials.anonymous();
-	    try {
-		  const user = await app.logIn(credentials);
-		   console.log(user) 
-		} catch(err) {
-		  console.error("Failed to log in", err);
-	       }	
-		
   	   // Obtén el usuario almacenado en localStorage
            usuario = JSON.parse(localStorage.getItem("usuario"));
   	   // Verifica si el usuario existe antes de intentar mostrarlo
