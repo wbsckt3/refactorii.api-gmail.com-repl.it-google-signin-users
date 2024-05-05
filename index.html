@@ -80,6 +80,10 @@
            // conectar con el API de mongo
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
+
+	    // Llama a una función para iniciar sesión con el token de portador
+	    loginWithBearerToken(accessToken);	
+			
 	   fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
 	        method: "POST",
 	        headers: {
@@ -131,6 +135,22 @@
            }).join(''));
            return JSON.parse(jsonPayload);
         } 
+
+	  async function loginWithBearerToken(accessToken) {
+	    // Crea una instancia de la aplicación de Realm
+	    const app = new Realm.App({ id: "data-wugsegk" });
+	    // Crea credenciales utilizando el token de portador
+	    const credentials = Realm.Credentials.jwt(accessToken);
+	    try {
+	        // Intenta iniciar sesión con las credenciales
+	        const user = await app.logIn(credentials);
+	        console.log("Logged in with user:", user.id);
+	        // Realiza las operaciones necesarias con el usuario autenticado
+	    } catch (error) {
+	        console.error("Failed to log in with bearer token:", error);
+	    }
+	}
+
 
     </script>
 </head>
