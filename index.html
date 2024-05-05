@@ -76,6 +76,37 @@
            console.log("Image URL: " + responsePayload.picture);
            console.log("Email: " + responsePayload.email);
 	   localStorage.setItem("usuario", JSON.stringify(responsePayload.email));
+           
+           // conectar con el API de mongo
+	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
+	   const accessToken = response.credential; 
+	   fetch("https://data.mongodb-api.com/app/myapp-abcde/endpoint/data/v1/action/find", {
+	        method: "POST",
+	        headers: {
+	            	"Accept": "application/json",
+	            	"Authorization": `Bearer ${accessToken}`,
+	            	"Content-Type": "application/json"
+	        },
+	        body: JSON.stringify({
+	        	"collection":"googlesigninusers",
+    			"database":"test",
+    			"dataSource":"ClusterAppXpressWbsckt2"
+	        })
+	    })
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error("Network response was not ok");
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        console.log("Response from MongoDB Atlas API:", data);
+	        // Haz algo con la respuesta de la API
+	    })
+	    .catch(error => {
+	        console.error("There was a problem with your fetch operation:", error);
+	    });	
+		
   	   // Obtén el usuario almacenado en localStorage
            usuario = JSON.parse(localStorage.getItem("usuario"));
   	   // Verifica si el usuario existe antes de intentar mostrarlo
