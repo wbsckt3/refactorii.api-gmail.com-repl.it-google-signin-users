@@ -82,8 +82,20 @@
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
 			
-	    // Llama a una función para iniciar sesión con el token de portador
-	    loginWithBearerToken(accessToken);	
+	    var settings = {
+		  "async": true,
+		  "crossDomain": true,
+		  "url": "https://dev-tgnls5d6l1wc4wjs.us.auth0.com/oauth/token",
+		  "method": "POST",
+		  "headers": {
+		    "content-type": "application/json"
+		  },
+		  "data": "{\"client_id\":\"N2Ji6ZdCrw57rt6DYhLS4MWkCnrckX7u\",\"client_secret\":\"a5DZj6RMm_NXR1DXO4gP0ZpTyQJ-D9nse0gbsi7lKTbiA2qjtc3ugSybN8MEVFGs\",\"audience\":\"https://dev-tgnls5d6l1wc4wjs.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}"
+		}
+		
+		$.ajax(settings).done(function (response) {
+		  console.log(response);
+		})
 			
 	   fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
 	        method: "POST",
