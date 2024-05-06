@@ -81,23 +81,7 @@
            // conectar con el API de mongo
 	   // Aquí realizas la solicitud a la API de MongoDB Atlas utilizando fetch
 	   const accessToken = response.credential; 
-			
-	        // Clave secreta para firmar el token JWT
-		const secretKey = 'customjwtsecretname'; // Reemplaza esto con tu clave secreta
-		// Datos que quieres incluir en el token
-		const payload = {
-		  // Aquí puedes incluir cualquier dato que desees asociar con el token
-		  usuario: 'usuarioEjemplo',
-		  rol: 'admin'
-		};
-		// Opciones de configuración para el token
-		const options = {
-		  // Establece el tiempo de expiración del token (opcional)
-		  expiresIn: '1h'
-		};
-		// Genera el token JWT firmado
-		const token = jwt.sign(payload, secretKey, options);
-		console.log('Token JWT generado:', token);
+		
 			
 	   /*fetch("https://us-east-1.aws.data.mongodb-api.com/app/data-wugsegk/endpoint/data/v1/action/find", {
 	        method: "POST",
